@@ -47,7 +47,7 @@ Watch the presentation video of VMAS, showing its structure, scenarios, and expe
 Watch the talk at DARS 2022 about VMAS.
 <p align="center">
 
-[![VMAS Video](https://img.youtube.com/vi/boViBY7Woqg/0.jpg)](https://www.youtube.com/watch?v=boViBY7Woqg)
+[![DARS 2022 Recording](https://img.youtube.com/vi/boViBY7Woqg/0.jpg)](https://www.youtube.com/watch?v=boViBY7Woqg)
 </p>
 
 ## Table of contents
@@ -61,6 +61,7 @@ Watch the talk at DARS 2022 about VMAS.
     + [Install](#install)
     + [Run](#run)
       - [RLlib](#rllib)
+    + [Tests](#tests)
     + [Input and output spaces](#input-and-output-spaces)
       - [Output spaces](#output-spaces)
       - [Input action space](#input-action-space)
@@ -141,6 +142,10 @@ A further example that you can run is contained in `use_vmas_env.py` in the `exa
 #### RLlib
 
 To see how to use VMAS in RLlib, check out the script in `examples/rllib.py`.
+
+### Tests
+
+The scenarios and the simulator have tests setup, which can be run with PyTest (`$ pytest`) after installing the testing dependencies from [the install section](#install). Read more on [the PyTest docs](https://docs.pytest.org/how-to/usage.html).
 
 ### Input and output spaces
 

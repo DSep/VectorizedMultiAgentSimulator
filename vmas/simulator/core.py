@@ -753,6 +753,7 @@ class Agent(Entity):
         u_rot_range: float = 0.0,
         u_rot_multiplier: float = 1.0,
         action_script: Callable[[Agent, World], None] = None,
+        super_agent_script: Callable[[Agent, World], None] = None,
         sensors: List[Sensor] = None,
         c_noise: float = None,
         silent: bool = True,
@@ -797,6 +798,8 @@ class Agent(Entity):
         self._max_t = max_t
         # script behavior to execute
         self._action_script = action_script
+        # additional super agent behavior to execute
+        self._super_agent_script = super_agent_script
         # agents sensors
         self._sensors = []
         if sensors is not None:
@@ -837,8 +840,13 @@ class Agent(Entity):
     def action_script(self) -> Callable[[Agent, World], None]:
         return self._action_script
 
+    @property
+    def super_agent_script(self) -> Callable[[Agent, World], None]:
+        return self._super_agent_script
+
     def action_callback(self, world: World):
         self._action_script(self, world)
+        self._super_agent_script(self, world)
         if self._silent or world.dim_c == 0:
             assert (
                 self._action.c is None
@@ -1111,6 +1119,11 @@ class World(TorchVectorizedObject):
     @property
     def scripted_agents(self) -> List[Agent]:
         return [agent for agent in self._agents if agent.action_script is not None]
+
+    # return all super agents
+    @property
+    def super_agents(self) -> List[Agent]:
+        return [agent for agent in self._agents if agent.super_agent_script is not None]
 
     def _cast_ray_to_box(
         self,
