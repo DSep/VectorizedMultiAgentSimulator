@@ -21,7 +21,7 @@ def use_vmas_env(render: bool = False, save_render: bool = False):
     continuous_actions = False
     device = "cpu"  # or cuda or any other torch device
     n_steps = 100  # Number of steps before returning done
-    dict_spaces = True  # Weather to return obs, rewards, and infos as dictionaries with agent names (by default they are lists of len # of agents)
+    dict_spaces = True  # Whether to return obs, rewards, and infos as dictionaries with agent names (by default they are lists of len # of agents)
 
     simple_2d_action = (
         [0, 0.5] if continuous_actions else [3]

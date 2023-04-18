@@ -105,7 +105,7 @@ pip install "ray[rllib]"==2.2 # We support versions "ray[rllib]<=2.2,>=1.13"
 pip install torchrl
 
 # Logging
-pip installl wandb 
+pip install wandb 
 
 # Save renders
 pip install opencv-python moviepy

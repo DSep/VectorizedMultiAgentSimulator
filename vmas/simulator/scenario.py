@@ -126,7 +126,7 @@ class BaseScenario(ABC):
             >>> from vmas.simulator.scenario import BaseScenario
             >>> from vmas.simulator.utils import Color
             >>> class Scenario(BaseScenario):
-            >>>     def reset_world_at(self, env_index: int = None)
+            >>>     def reset_world_at(self, env_index: int = None):
             ...        for i, agent in enumerate(self.world.agents):
             ...            agent.set_pos(
             ...                torch.tensor(

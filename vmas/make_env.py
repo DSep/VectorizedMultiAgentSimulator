@@ -30,11 +30,11 @@ def make_env(
         scenario: Scenario to load. Can be the name of a file in the "scenarios" folder or a `BaseScenario` class.
         num_envs: Number of vectorized simulation environments.
         device: Device for simulation
-        continuous_actions: Weather to use continuous actions.
+        continuous_actions: Whether to use continuous actions.
         wrapper: Wrapper class to use. For example can be Wrapper.RLLIB.
         max_steps: Maximum number of steps in each vectorized environment after which done is returned
         seed: seed
-        dict_spaces:  Weather to use dictionary i/o spaces with format {agent_name: tensor}
+        dict_spaces:  Whether to use dictionary i/o spaces with format {agent_name: tensor}
         for obs, rewards, and info instead of tuples.
         **kwargs ():
 
@@ -46,7 +46,7 @@ def make_env(
     if isinstance(scenario, str):
         if not scenario.endswith(".py"):
             scenario += ".py"
-        scenario = scenarios.load(scenario).Scenario()
+        scenario: BaseScenario = scenarios.load(scenario).Scenario()
     env = Environment(
         scenario,
         num_envs=num_envs,

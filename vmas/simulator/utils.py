@@ -4,7 +4,7 @@
 import os
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Iterable, Any
 
 import numpy as np
 import torch
@@ -169,13 +169,13 @@ class TorchUtils:
 class ScenarioUtils:
     @staticmethod
     def spawn_entities_randomly(
-        entities,
+        entities: Iterable[Any],
         world,
         env_index: int,
         min_dist_between_entities: float,
         x_bounds: Tuple[int, int],
         y_bounds: Tuple[int, int],
-        occupied_positions: Tensor = None,
+        occupied_positions: Union[Tensor, None] = None,
     ):
         batch_size = world.batch_dim if env_index is None else 1
 
@@ -231,6 +231,7 @@ class ScenarioUtils:
 
             dist = torch.cdist(occupied_positions, pos)
             overlaps = torch.any((dist < min_dist_between_entities).squeeze(2), dim=1)
+            # overwrite the poses which have some overlap and use the new proposed_poses instead
             if torch.any(overlaps, dim=0):
                 pos[overlaps] = proposed_pos[overlaps]
             else:
