@@ -7,7 +7,7 @@ from __future__ import annotations
 import math
 import typing
 from abc import ABC, abstractmethod
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Optional, Union
 
 import torch
 from torch import Tensor
@@ -464,7 +464,7 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         drag: float = None,
         linear_friction: float = None,
         angular_friction: float = None,
-        gravity: float = None,
+        gravity: Optional[Union[float, Tuple[float, float]]] = None,
         collision_filter: Callable[[Entity], bool] = lambda _: True,
     ):
         TorchVectorizedObject.__init__(self)
@@ -753,7 +753,7 @@ class Agent(Entity):
         u_rot_range: float = 0.0,
         u_rot_multiplier: float = 1.0,
         action_script: Callable[[Agent, World], None] = None,
-        super_agent_script: Callable[[Agent, World], None] = None,
+        is_super_agent: bool = False,
         sensors: List[Sensor] = None,
         c_noise: float = None,
         silent: bool = True,
@@ -761,7 +761,7 @@ class Agent(Entity):
         drag: float = None,
         linear_friction: float = None,
         angular_friction: float = None,
-        gravity: float = None,
+        gravity: Tuple[float, float] = (0.0, 0.0),
         collision_filter: Callable[[Entity], bool] = lambda _: True,
         render_action: bool = False,
     ):
@@ -780,7 +780,7 @@ class Agent(Entity):
             drag=drag,
             linear_friction=linear_friction,
             angular_friction=angular_friction,
-            gravity=gravity,
+            # gravity=gravity,
             collision_filter=collision_filter,
         )
         if obs_range == 0.0:
@@ -796,10 +796,12 @@ class Agent(Entity):
         # torque constraints
         self._t_range = t_range
         self._max_t = max_t
+        # gravity
+        self._gravity = torch.tensor(gravity, device=self.device, dtype=torch.float32)
         # script behavior to execute
         self._action_script = action_script
-        # additional super agent behavior to execute
-        self._super_agent_script = super_agent_script
+        # super agent flag
+        self._is_super_agent = is_super_agent
         # agents sensors
         self._sensors = []
         if sensors is not None:
@@ -840,13 +842,8 @@ class Agent(Entity):
     def action_script(self) -> Callable[[Agent, World], None]:
         return self._action_script
 
-    @property
-    def super_agent_script(self) -> Callable[[Agent, World], None]:
-        return self._super_agent_script
-
     def action_callback(self, world: World):
         self._action_script(self, world)
-        self._super_agent_script(self, world)
         if self._silent or world.dim_c == 0:
             assert (
                 self._action.c is None
@@ -871,6 +868,10 @@ class Agent(Entity):
                 (self._action.u_rot / self._action.u_rot_multiplier).abs()
                 <= self.u_rot_range
             ).all(), f"Scripted physical rotation action of {self.name} is out of range"
+
+    @property
+    def is_super_agent(self) -> bool:
+        return self._is_super_agent
 
     @property
     def u_range(self):
@@ -1123,7 +1124,7 @@ class World(TorchVectorizedObject):
     # return all super agents
     @property
     def super_agents(self) -> List[Agent]:
-        return [agent for agent in self._agents if agent.super_agent_script is not None]
+        return [agent for agent in self._agents if agent.is_super_agent]
 
     def _cast_ray_to_box(
         self,
@@ -1547,7 +1548,8 @@ class World(TorchVectorizedObject):
         if entity.movable:
             if not (self._gravity == 0.0).all():
                 self.force[:, index] += entity.mass * self._gravity
-            if entity.gravity is not None:
+            if entity.gravity is not None or (
+                torch.is_tensor(entity.gravity) and not (entity.gravity == 0.0).all()):
                 self.force[:, index] += entity.mass * entity.gravity
 
     def _apply_friction_force(self, entity: Entity, index: int):
