@@ -464,7 +464,7 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         drag: float = None,
         linear_friction: float = None,
         angular_friction: float = None,
-        gravity: Optional[Union[float, Tuple[float, float]]] = None,
+        gravity: typing.Union[float, Tensor, Tuple[float, float]] = None,
         collision_filter: Callable[[Entity], bool] = lambda _: True,
     ):
         TorchVectorizedObject.__init__(self)
@@ -500,7 +500,14 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         self._linear_friction = linear_friction
         self._angular_friction = angular_friction
         # gravity
-        self._gravity = gravity
+        if isinstance(gravity, Tensor):
+            self._gravity = gravity
+        else:
+            self._gravity = (
+                torch.tensor(gravity, device=self.device, dtype=torch.float32)
+                if gravity is not None
+                else gravity
+            )
         # entity goal
         self._goal = None
         # Render the entity
