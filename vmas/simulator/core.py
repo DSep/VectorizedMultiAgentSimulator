@@ -460,6 +460,7 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         v_range: float = None,
         max_speed: float = None,
         color: Union[Color, Tuple] = Color.GRAY,
+        alpha: float = 1.0,
         is_joint: bool = False,
         drag: float = None,
         linear_friction: float = None,
@@ -486,6 +487,8 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         self._v_range = v_range
         # color
         self._color = color
+        # alpha
+        self._alpha = alpha
         # shape
         self._shape = shape
         # is joint
@@ -591,6 +594,14 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         self._color = color
 
     @property
+    def alpha(self):
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, alpha):
+        self._alpha = alpha
+
+    @property
     def goal(self):
         return self._goal
 
@@ -686,7 +697,7 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         color = self.color
         if isinstance(color, torch.Tensor) and len(color.shape) > 1:
             color = color[env_index]
-        geom.set_color(*color)
+        geom.set_color(*color, alpha=self.alpha)
 
         return [geom]
 
@@ -705,6 +716,7 @@ class Landmark(Entity):
         v_range: float = None,
         max_speed: float = None,
         color=Color.GRAY,
+        alpha: float = 1.0,
         is_joint: bool = False,
         drag: float = None,
         linear_friction: float = None,
@@ -723,6 +735,7 @@ class Landmark(Entity):
             v_range,
             max_speed,
             color,
+            alpha,
             is_joint,
             drag,
             linear_friction,

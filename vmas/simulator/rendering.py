@@ -393,11 +393,12 @@ class FilledPolygon(Geom):
         glEnd()
 
         if self.draw_border:
+            transparency = 0.5
             color = (
-                self._color.vec4[0] * 0.5,
-                self._color.vec4[1] * 0.5,
-                self._color.vec4[2] * 0.5,
-                self._color.vec4[3] * 0.5,
+                self._color.vec4[0] * transparency,
+                self._color.vec4[1] * transparency,
+                self._color.vec4[2] * transparency,
+                self._color.vec4[3] * transparency,
             )
             glColor4f(*color)
             glBegin(GL_LINE_LOOP)
