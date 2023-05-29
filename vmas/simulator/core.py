@@ -459,12 +459,12 @@ class Entity(TorchVectorizedObject, Observable, ABC):
         shape: Shape = Sphere(),
         v_range: float = None,
         max_speed: float = None,
-        color=Color.GRAY,
+        color: Union[Color, Tuple] = Color.GRAY,
         is_joint: bool = False,
         drag: float = None,
         linear_friction: float = None,
         angular_friction: float = None,
-        gravity: typing.Union[float, Tensor, Tuple[float, float]] = None,
+        gravity: Optional[typing.Union[float, Tensor, Tuple]] = None,
         collision_filter: Callable[[Entity], bool] = lambda _: True,
     ):
         TorchVectorizedObject.__init__(self)
@@ -1012,7 +1012,7 @@ class World(TorchVectorizedObject):
         # list of agents and entities (can change at execution-time!)
         self._agents = []
         self._landmarks = []
-        # world dims: no boundaries if none
+        # world dims: no boundaries if none. # NOTE: Only rectangular boundaries supported for now
         self._x_semidim = x_semidim
         self._y_semidim = y_semidim
         # position dimensionality
@@ -1132,6 +1132,11 @@ class World(TorchVectorizedObject):
     @property
     def super_agents(self) -> List[Agent]:
         return [agent for agent in self._agents if agent.is_super_agent]
+
+    # return all super agents
+    @property
+    def non_super_agents(self) -> List[Agent]:
+        return [agent for agent in self._agents if not agent.is_super_agent]
 
     def _cast_ray_to_box(
         self,
@@ -1289,7 +1294,7 @@ class World(TorchVectorizedObject):
             # assert e.collides(entity) and entity.collides(
             #     e
             # ), "Rays are only casted among collidables"
-            assert e.collides(entity), "Rays are only casted towards collidables"
+            assert e.collides(entity), f"Rays are only casted towards collidables, {entity.name} does not collide with -> {e.name}"
             if isinstance(e.shape, Box):
                 d = self._cast_ray_to_box(e, pos, angles, max_range)
             elif isinstance(e.shape, Sphere):

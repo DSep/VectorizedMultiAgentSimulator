@@ -42,12 +42,31 @@ VIRIDIS_CMAP = np.array(
 
 class Color(Enum):
     RED = (0.75, 0.25, 0.25)
+    ORANGE = (1, 0.65, 0.0)
     GREEN = (0.25, 0.75, 0.25)
     BLUE = (0.25, 0.25, 0.75)
     LIGHT_GREEN = (0.45, 0.95, 0.45)
     WHITE = (0.75, 0.75, 0.75)
     GRAY = (0.25, 0.25, 0.25)
     BLACK = (0.15, 0.15, 0.15)
+    BLACK_2 = (0.05, 0.05, 0.05)
+    BLACK_3 = (0.00, 0.00, 0.00)
+    NEON_GREEN = (0.25, 0.95, 0.25)
+    NEON_BLUE = (0.25, 0.25, 0.95)
+    # Colourblind friendly colours
+    CB_BLACK = (0.00, 0.00, 0.00)
+    CB_ORANGE = (0.90, 0.60, 0.00)
+    CB_SKY_BLUE = (0.35, 0.70, 0.90)
+    CB_BLUISH_GREEN = (0.00, 0.60, 0.50)
+    CB_YELLOW = (0.95, 0.90, 0.25)
+    CB_BLUE = (0.00, 0.45, 0.70)
+    CB_VERMILLION = (0.80, 0.40, 0.00)
+    CB_REDDISH_PURPLE = (0.80, 0.60, 0.70)
+    # Sort of colourblind friendly colours
+    CB_DARK_RED = (0.40, 0.07, 0.00)
+    CB_LIGHT_GREEN = (0.00, 0.30, 0.25)
+    # CB_GREEN = (0.35, 0.70, 0.30)
+    # CB_PURPLE = (0.90, 0.40, 0.70)
 
 
 def override(cls):

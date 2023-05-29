@@ -260,6 +260,7 @@ def render_interactively(
     control_two_agents: bool = False,
     display_info: bool = True,
     save_render: bool = False,
+    seed: int = 0,
     **kwargs,
 ):
     """
@@ -279,7 +280,7 @@ def render_interactively(
             device="cpu",
             continuous_actions=True,
             wrapper=Wrapper.GYM,
-            seed=0,
+            seed=seed,
             # Environment specific variables
             **kwargs,
         ),
